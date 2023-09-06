@@ -1,16 +1,16 @@
-// Función para obtener una frase aleatoria de la API "Quotable"
+// Función para obtener una frase aleatoria en español de la API "Frases de la Vida"
 async function obtenerFraseAleatoria() {
     try {
-        const response = await fetch('https://api.quotable.io/random');
+        const response = await fetch('https://api.frasesvida.com/v1/random');
         const data = await response.json();
-        return data.content;
+        return data.data.frase;
     } catch (error) {
         console.error('Error al obtener la frase:', error);
         return 'No se pudo obtener la frase.';
     }
 }
 
-// Función para generar y mostrar una frase aleatoria
+// Función para generar y mostrar una frase aleatoria en español
 async function generarFrase() {
     const fraseAleatoria = await obtenerFraseAleatoria();
     document.getElementById("frase").textContent = fraseAleatoria;
