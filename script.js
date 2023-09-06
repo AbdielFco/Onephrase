@@ -1,47 +1,30 @@
-// Función para obtener una frase aleatoria en inglés de la API "Quotable"
-async function obtenerFraseAleatoriaEnIngles() {
-    try {
-        const response = await fetch('https://api.quotable.io/random');
-        const data = await response.json();
-        return data.content;
-    } catch (error) {
-        console.error('Error al obtener la frase:', error);
-        return 'No se pudo obtener la frase.';
-    }
-}
+document.addEventListener("DOMContentLoaded", function () {
+    const generateButton = document.getElementById("generateButton");
+    const randomPhraseElement = document.getElementById("randomPhrase");
 
-// Función para traducir una frase de inglés a español utilizando la API de Google Cloud Translation
-async function traducirFraseAlEspanol(frase) {
-    try {
-        const response = await fetch('https://translation.googleapis.com/language/translate/v2', {
-            method: 'POST',
+    generateButton.addEventListener("click", async function () {
+        // Obtener una frase aleatoria en inglés de JSONPlaceholder
+        const randomResponse = await fetch("https://jsonplaceholder.typicode.com/posts/" + Math.floor(Math.random() * 100));
+        const randomData = await randomResponse.json();
+        const englishPhrase = randomData.title;
+
+        // Traducir la frase al español usando la API de Traducción de Google Cloud
+        const translationResponse = await fetch("https://translation.googleapis.com/language/translate/v2?key=YOUR_API_KEY", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                q: frase,
-                source: 'en',
-                target: 'es',
-                format: 'text',
+                q: englishPhrase,
+                source: "en",
+                target: "es",
+                format: "text",
             }),
         });
-        const data = await response.json();
-        return data.data.translations[0].translatedText;
-    } catch (error) {
-        console.error('Error al traducir la frase:', error);
-        return 'No se pudo traducir la frase.';
-    }
-}
+        const translationData = await translationResponse.json();
+        const spanishPhrase = translationData.data.translations[0].translatedText;
 
-// Función para generar y mostrar una frase aleatoria en español
-async function generarFrase() {
-    const fraseEnIngles = await obtenerFraseAleatoriaEnIngles();
-    const fraseEnEspanol = await traducirFraseAlEspanol(fraseEnIngles);
-    document.getElementById("frase").textContent = fraseEnEspanol;
-}
-
-// Event listener para el botón
-document.getElementById("generarBtn").addEventListener("click", generarFrase);
-
-// Generar una frase al cargar la página
-generarFrase();
+        // Mostrar la frase traducida en la página
+        randomPhraseElement.textContent = `Frase en español: ${spanishPhrase}`;
+    });
+});
